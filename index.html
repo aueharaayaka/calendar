@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>カレンダー</title>
+<meta name="theme-color" content="#fbeef6">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,6 +45,7 @@
     background-attachment: fixed;
     color: var(--text);
     height: 100vh;
+    height: 100dvh;
     padding: 16px;
     overflow: hidden;
     display: flex;
@@ -180,57 +182,62 @@
   .hidden { display: none !important; }
 
   /* ── MONTH VIEW ── */
+  /* table wrapper gives the outer border + radius */
+  .cal-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
   .weekday-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-bottom: 6px;
-    padding: 0 2px;
     flex-shrink: 0;
+    background: var(--surface-soft);
+    border-bottom: 1.5px solid var(--border);
   }
   .weekday-row span {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: .05em;
     color: var(--text-soft);
-    padding: 4px 0;
+    padding: 5px 2px;
   }
   .weekday-row span.sun { color: #f3a0bd; }
   .weekday-row span.sat { color: #a0bff3; }
 
+  /* gap-as-border technique: grid bg = divider colour, gap = 1px */
   .month-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
     flex: 1;
-    gap: 6px;
+    background: var(--border-soft);
+    gap: 1px;
     overflow: hidden;
   }
   .day-cell {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 6px 6px 4px;
+    background: #fff;
+    padding: 5px 5px 3px;
     cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform .16s, box-shadow .16s, border-color .16s;
     display: flex;
     flex-direction: column;
     gap: 3px;
     overflow: hidden;
+    transition: background .14s;
   }
-  .day-cell:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-soft);
-    border-color: var(--pink-soft);
-  }
-  .day-cell.other-month { background: var(--surface-soft); opacity: .55; }
-  .day-cell.today { border-color: var(--pink); background: var(--pink-soft); }
+  .day-cell:hover { background: #fdf0f9; }
+  .day-cell.other-month { background: #faf8fb; opacity: .7; }
+  .day-cell.today { background: var(--pink-soft); }
   .day-num {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text);
-    width: 24px; height: 24px;
+    width: 22px; height: 22px;
     display: grid; place-items: center;
     border-radius: 50%;
     flex-shrink: 0;
@@ -484,8 +491,19 @@
 
   @media (max-width: 720px) {
     body { padding: 8px; }
-    .period-label { min-width: 110px; font-size: 15px; }
-    .chip { font-size: 11px; }
+    .period-label { min-width: 100px; font-size: 15px; }
+  }
+
+  /* ── MOBILE: prevent topbar wrap, tighten chips ── */
+  @media (max-width: 600px) {
+    .topbar { padding: 10px 12px 8px; gap: 8px; flex-wrap: nowrap; }
+    .period-label { min-width: 80px; font-size: 13px; }
+    .today-btn { padding: 6px 10px; font-size: 12px; }
+    .view-toggle button { padding: 6px 12px; font-size: 12px; }
+    .view { padding: 3px 8px 10px; }
+    .chip { padding: 2px 5px; font-size: 11px; gap: 2px; }
+    .chip-time { display: none; }
+    .day-num { font-size: 11px; width: 20px; height: 20px; }
   }
 </style>
 </head>
@@ -507,8 +525,10 @@
 
   <!-- MONTH VIEW -->
   <div class="view" id="monthView">
-    <div class="weekday-row" id="weekdayRow"></div>
-    <div class="month-grid" id="monthGrid"></div>
+    <div class="cal-table">
+      <div class="weekday-row" id="weekdayRow"></div>
+      <div class="month-grid" id="monthGrid"></div>
+    </div>
   </div>
 
   <!-- WEEK / TIMELINE VIEW -->
